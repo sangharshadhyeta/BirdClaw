@@ -2,7 +2,7 @@
 
 **A persistent, self-improving AI agent that works on your behalf — day and night.**
 
-BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local language models via llama.cpp. It runs as a daemon, accumulates knowledge across sessions, executes multi-step tasks while you are away, writes its own skills from successful patterns, and improves its own code over time.
+BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local language models especially smallest of reliable models like Gemma E4B via llama.cpp. It runs as a daemon, accumulates knowledge across sessions, executes multi-step tasks while you are away, writes its own skills from successful patterns, and improves its own code over time.
 
 **Everything runs locally. No API keys. No cloud. No cost per token.**
 
@@ -13,7 +13,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 | Other AI tools | BirdClaw |
 |----------------|----------|
 | Stateless — forgets after every response | Persistent — remembers tasks, facts, reflections across sessions |
-| One model, one role | Dual-model: 4B thinker reasons, 270M hands formats |
+| One model, one role | Dual-model: Gemma E4B thinker on/off |
 | You stay online to get results | Daemon runs while you sleep, notifies when done |
 | Fixed capabilities | Self-update cycle — agent patches its own source code |
 | Blind to its own code | Reads its own source at runtime; knows what it can and can't do |
