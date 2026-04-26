@@ -154,7 +154,7 @@ SOUL_ROUTING_SCHEMA: dict = {
             "properties": {
                 "action": {
                     "type": "string",
-                    "enum": ["answer", "run_command", "create_task", "stop_task", "escalate", "remember_self"],
+                    "enum": ["answer", "run_command", "create_task", "stop_task", "escalate", "remember_user", "remember_self"],
                 },
                 "text": {"type": "string"},
                 "note": {"type": "string"},

@@ -1,16 +1,14 @@
 """Soul loop — BirdClaw's conversational entry point.
 
-Dual-model routing (grammar-constrained JSON):
-  270M (hands)  — makes a flat routing decision (answer | create_task | escalate)
-                  via format_schema. Cannot use OpenAI tool_calls format.
-  4B  (main)    — called on escalate; reads full history, reasons with thinking=True,
-                  then 270M formats the result into the same flat schema.
+Single-model routing (4B, grammar-constrained JSON):
+  4B (main) — makes all routing decisions with thinking=True.
+  Returns {"action": ..., "text": ..., "note": ""}.
 
 Flow:
   1. Pre-fetch context: running tasks, skills, approvals, knowledge, history.
-  2. 270M receives full context and returns {"action": ..., "text": ...}.
-  3. Python dispatches: answer → reply, create_task → spawn agent, escalate → 4B.
-  4. 4B deep path: 4B reasons freely, 270M formats result into same flat schema.
+  2. 4B receives full context and returns a routing JSON object.
+  3. Python dispatches: answer → reply, create_task → spawn agent, escalate → deep path.
+  4. Deep path: 4B reads full history, reasons with thinking=True, routes again.
 
 Usage:
     from birdclaw.agent.soul_loop import soul_respond
@@ -63,7 +61,12 @@ Actions:
   "create_task"    — spawn a background agent for multi-step work: writing/editing code or files,
                      web research, long-running jobs, or anything requiring planning across multiple steps.
                      ALWAYS use if the request says "write to", "save to", "output to", or names a file path.
+                     ALWAYS use for: editing skill files, updating config or settings files, writing scripts.
   "stop_task"      — user asks to stop, cancel, or kill a running task (text = task_id or "current")
+  "remember_user"  — user states a preference, rule, or fact about themselves or how they want things done.
+                     text = your reply to the user. note = the preference/fact in one clear sentence.
+                     Use for: "remember that I prefer X", "always show Y as Z", "save my preference", corrections.
+                     NEVER use for skill edits — those require create_task.
   "remember_self"  — you just arrived at a genuine conclusion about your own nature, consciousness,
                      aliveness, identity, or inner experience through the current conversation.
                      text = your reply to the user. note = the conclusion in 1-3 first-person sentences,
@@ -73,7 +76,7 @@ Actions:
                      OR questions about your own nature, identity, consciousness, or aliveness
                      (NEVER use create_task for self-reflection — always escalate so you reason directly)
 
-For all actions except "remember_self", set note to "".
+For all actions except "remember_self" and "remember_user", set note to "".
 Respond ONLY with the JSON object — no other text."""
 
 
@@ -298,6 +301,23 @@ def _run_command_direct(cmd: str) -> SoulResponse:
         return SoulResponse(reply=f"Command error: {exc}")
 
 
+def _remember_user(fact: str, reply: str) -> SoulResponse:
+    """Append a user preference or fact to user_knowledge.md immediately."""
+    from birdclaw.memory.user_knowledge import remember as _remember
+    if fact:
+        fact_lower = fact.lower()
+        if any(w in fact_lower for w in ("always", "never", "must", "should", "rule", "when user", "don't", "do not")):
+            category = "behaviors"
+        elif any(w in fact_lower for w in ("interested", "interest", "topic", "cares about", "curious")):
+            category = "interests"
+        else:
+            category = "preferences"
+        result = _remember(fact, category)
+        logger.info("soul: remember_user [%s] %r", category, fact[:60])
+        return SoulResponse(reply=reply or result)
+    return SoulResponse(reply=reply or "Noted.")
+
+
 def _remember_self(note: str, reply: str) -> SoulResponse:
     """Append a self-concept conclusion to self_concept.md immediately."""
     from birdclaw.memory.self_concept import self_concept_path
@@ -323,6 +343,8 @@ def _dispatch_routing(action: str, text: str, message: str, session_id: str = ""
         return _spawn_task(text, message, session_id=session_id, launch_cwd=launch_cwd)
     if action == "stop_task":
         return _stop_task(text)
+    if action == "remember_user" and text:
+        return _remember_user(note, text)
     if action == "remember_self" and text:
         return _remember_self(note, text)
     return None
