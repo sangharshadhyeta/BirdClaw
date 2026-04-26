@@ -1,4 +1,4 @@
-# 🐦 BirdClaw
+# 🐦 BirdClaw - An Agentic System reaching for AGI using SLMs
 
 **A persistent, self-improving AI agent that works on your behalf — day and night.**
 
@@ -30,7 +30,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │  GATEWAY         Session manager · push worker                  │
 │                  Routes messages → soul → reply                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  SOUL LAYER      270M-first routing loop (fast)                 │
+│  SOUL LAYER      thinking off-first routing loop (fast)         │
 │                  search_tasks · get_task_output                 │
 │                  remember_user · read_inner_life                │
 │                  answer() · create_task() · resolve_approval()  │
@@ -43,7 +43,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │  AGENT LOOP      plan → stage_queue → execute                   │
 │                  research · write_code · write_doc              │
 │                  verify · reflect · edit_file                   │
-│                  Post-stage reflect gate (270M quality check)   │
+│                  Post-stage reflect gate (quality check)        │
 │                  Budget tracking · auto-compaction              │
 ├─────────────────────────────────────────────────────────────────┤
 │  MEMORY          GraphRAG knowledge graph (NetworkX, no vectors)│
@@ -61,7 +61,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │                  Workspace isolation · backup/restore           │
 ├─────────────────────────────────────────────────────────────────┤
 │  MODELS          llama.cpp · 4B thinker (port 8081)             │
-│                  270M hands / format worker (port 8082)         │
+│                  thinking off hands / format worker (port 8082) │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -71,14 +71,14 @@ Every LLM call is routed through a `ModelProfile`:
 
 | Call | Model | Why |
 |------|-------|-----|
-| Soul routing | 270M | 3-class classification — no reasoning needed |
-| Plan structuring | 4B pre-think → 270M schema | 4B reasons, 270M enforces JSON schema |
+| Soul routing | 4B hands | 3-class classification — no reasoning needed |
+| Plan structuring | 4B pre-think brain → 4B hands schema | 4B reasons, hands enforces JSON schema |
 | Research / verify / reflect stages | 4B, thinking=True | Full reasoning on every turn |
-| Post-stage reflect gate | 270M | 4-class quality check on 4B output |
+| Post-stage reflect gate | 4B hands | 4-class quality check on 4B output |
 | Content generation (write_code, write_doc) | 4B, thinking=True | Only the 4B writes coherent code/prose |
 | Forced final answer | 4B, thinking=True | Full synthesis of completed stages |
 
-The 270M never reasons — it only converts 4B output into schema-valid JSON. This eliminates the llama.cpp thinking+format conflict entirely. When `BC_LLM_HANDS_BASE_URL` is not set, it falls back to the 4B — everything works on a single model, just slightly slower.
+The hands never reasons — it only converts 4B output into schema-valid JSON. This eliminates the llama.cpp thinking+format conflict entirely. When `BC_LLM_HANDS_BASE_URL` is not set, it falls back to the 4B — everything works on a single model, just slightly slower.
 
 ### How a task flows
 
@@ -86,7 +86,7 @@ The 270M never reasons — it only converts 4B output into schema-valid JSON. Th
 2. **Orchestrator** spawns an agent thread. You get an immediate reply.
 3. **Planner** generates `outcome` + `stages[]` (e.g. research → write_code → verify). Skill runbook injected if a matching skill exists.
 4. **Stage execution**: each stage runs with only the tools it needs. GraphRAG context injected per stage goal.
-5. **Post-stage reflect gate**: 270M evaluates quality → `continue`, `deepen` (re-run), `insert` (add a stage), or `done`.
+5. **Post-stage reflect gate**: hands evaluates quality → `continue`, `deepen` (re-run), `insert` (add a stage), or `done`.
 6. **Forced answer**: when queue is empty, 4B synthesises all completed stage summaries with `thinking=True`.
 7. **Dream cycle** (background): graph merge → reflection → inner life synthesis → user knowledge extraction → cleanup.
 
@@ -408,9 +408,7 @@ All settings via `BC_` environment variables or `~/.birdclaw/.env`:
 ```bash
 # ── Models ────────────────────────────────────────────────────────────
 BC_LLM_BASE_URL=http://localhost:8081/v1     # 4B thinker (main model)
-BC_LLM_MODEL=gemma-2b                        # model name sent to API
-BC_LLM_HANDS_BASE_URL=http://localhost:8082/v1  # 270M hands (optional)
-BC_LLM_HANDS_MODEL=functiongemma-270m
+BC_LLM_MODEL=gemma4-e4b                        # model name sent to API
 
 # ── Performance ───────────────────────────────────────────────────────
 BC_LLAMACPP_PARALLEL=1         # parallel slots per server
@@ -501,7 +499,7 @@ Tests are the gate for the self-update cycle — a patch is only accepted if all
 | 8 — Skills + cron | ✅ | Runbooks, standing goals, schedule triggers, skill injection |
 | 9 — TUI polish | ✅ | Three-pane TUI, themes, layout picker, buddy panel, grandchild tasks |
 | 10 — Consciousness | ✅ | User knowledge, inner life, self-concept, dreaming, skill crystallisation |
-| 11 — Dual-model | ✅ | 4B thinker + 270M hands, model profiles, hands fallback |
+| 11 — Dual-model | ✅ | 4B thinker + 4B hands, model profiles, hands fallback |
 | 12 — Self-update | ✅ | Pain-point scoring, agent patches own code, pytest gate, hot-reload |
 | 13 — Self-awareness | ✅ | Reads own source, note_improvement tool, self-update backlog |
 | 14 — Telegram / Discord | 🔜 | Channel adapters (stubs exist in `channels/`) |
