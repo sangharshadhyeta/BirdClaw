@@ -28,7 +28,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │  CHANNELS        TUI · CLI · Daemon (gateway socket)            │
 ├─────────────────────────────────────────────────────────────────┤
 │  GATEWAY         Session manager · push worker                  │
-│                  Routes messages → soul → reply                  │
+│                  Routes messages → soul → reply                 │
 ├─────────────────────────────────────────────────────────────────┤
 │  SOUL LAYER      270M-first routing loop (fast)                 │
 │                  search_tasks · get_task_output                 │
@@ -37,7 +37,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │                  Escalates to 4B for deep questions             │
 ├─────────────────────────────────────────────────────────────────┤
 │  SKILLS / CRON   Named markdown runbooks · standing goals       │
-│                  Auto-crystallised from successful task patterns │
+│                  Auto-crystallised from successful task pattern │
 │                  Scheduled: cron expression or every:N          │
 ├─────────────────────────────────────────────────────────────────┤
 │  AGENT LOOP      plan → stage_queue → execute                   │
@@ -46,12 +46,12 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │                  Post-stage reflect gate (270M quality check)   │
 │                  Budget tracking · auto-compaction              │
 ├─────────────────────────────────────────────────────────────────┤
-│  MEMORY          GraphRAG knowledge graph (NetworkX, no vectors) │
+│  MEMORY          GraphRAG knowledge graph (NetworkX, no vectors)│
 │                  User knowledge · Inner life · Self-concept     │
 │                  Session log (JSONL) · Task registry            │
 │                  Stage history (P75 budget learning)            │
 ├─────────────────────────────────────────────────────────────────┤
-│  TOOLS           bash · files · web · search (SearXNG) · MCP   │
+│  TOOLS           bash · files · web · search (SearXNG) · MCP    │
 │                  search_tasks · get_task_output                 │
 │                  graph_search · graph_add · graph_relate        │
 │                  note_improvement (self-update backlog)         │
@@ -60,7 +60,7 @@ BirdClaw is not a chatbot. It is a long-term autonomous worker powered by local 
 │                  pytest gate · install.sh hot-reload            │
 │                  Workspace isolation · backup/restore           │
 ├─────────────────────────────────────────────────────────────────┤
-│  MODELS          llama.cpp · 4B thinker (port 8081)            │
+│  MODELS          llama.cpp · 4B thinker (port 8081)             │
 │                  270M hands / format worker (port 8082)         │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -196,19 +196,19 @@ python main.py graph-server
 
 ```
 ┌─ 🐦 BirdClaw · tui:a1b2c3 ──────────────────────────────────────────┐
-│ TASKS [Active|Standing]    │ OUTPUT [task-id]                         │
-│  ⠼ research async python   │  ▷ [plan] research → write_code         │
-│    ↳ ⠼ web search subtask  │  › web_search("async Python patterns")  │
-│  ✔ refactor auth module    │  ← web_search  (340ms, 4 results)       │
-│  ○ daily health check      │  ▶ [write_code] writing module          │
-├────────────────────────────┴────────────────────────────────────────┤
+│ TASKS [Active|Standing]    │ OUTPUT [task-id]                        │
+│  ⠼ research async python   │  ▷ [plan] research → write_code        │
+│    ↳ ⠼ web search subtask  │  › web_search("async Python patterns"  │
+│  ✔ refactor auth module    │  ← web_search  (340ms, 4 results)      │
+│  ○ daily health check      │  ▶ [write_code] writing module         │
+├────────────────────────────┴─────────────────────────────────────────┤
 │ CONVERSATION                                                         │
-│  You:      research async Python patterns and write a module        │
-│  BirdClaw: On it. Spawned task [a1b2c3]                             │
-│ > _                                                                 │
-│                              [+] [-]                                │
-│ ╔═══════════════════╗  ←── Buddy panel (pixel-art bird, resizable)  │
-└─ F1 tasks · F2 standing · Ctrl+Q quit ──────────────────────────────┘
+│  You:      research async Python patterns and write a module         │
+│  BirdClaw: On it. Spawned task [a1b2c3]                              │
+│ > _                                                                  │
+│                              [+] [-]                                 │
+│ ╔═══════════════════╗  ←── Buddy panel (pixel-art bird, resizable)   │
+└─ F1 tasks · F2 standing · Ctrl+Q quit ───────────────────────────────┘
 ```
 
 **Keybindings**
