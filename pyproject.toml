@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "birdclaw"
+version = "0.1.0"
+description = "Long-term autonomous AI agent powered by local models"
+requires-python = ">=3.10"
+dependencies = [
+    # Core
+    "httpx>=0.27",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "rich>=13.0",
+    "textual>=0.80",
+    # Memory
+    "networkx>=3.0",
+    # Gateway daemon
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    # Web tools
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    # TUI image rendering (GIF playback in buddy panel)
+    "pillow>=10.0",
+    # Scheduler (skills/cron)
+    "croniter>=2.0",
+    # Channels (installed on demand — comment out until Phase 5)
+    # "python-telegram-bot>=21.0",
+    # Testing
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["birdclaw*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "--import-mode=importlib -p no:xdist"
+markers = [
+    "unit: pure unit tests — no I/O, no LLM, <1s each",
+    "component: component/integration tests — real I/O, no LLM, <10s each",
+    "smoke: quick LLM integration tests — real agent loop, simple tasks, <90s each",
+    "task: medium LLM task tests — single-stage real tasks, <5 min each",
+    "long_running: full LLM task tests — multi-stage, require live TUI socket, >5 min",
+    "timeout: max wall-clock seconds for a test (requires pytest-timeout)",
+    "lr_index: numeric index for selecting a single long-running test (1–50)",
+]

@@ -1,0 +1,58 @@
+# Secrets and local config
+.env
+.env.*
+*.env
+
+# Claude Code local settings
+.claude/
+
+# Sandbox / CI home directories
+.sandbox-home/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg-info/
+.installed.cfg
+
+# Virtual envs
+env/
+venv/
+.venv/
+conda-env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# BirdClaw runtime data (stays in ~/.birdclaw/)
+*.log
+*.sock
+
+# Test outputs
+tests/outputs/long_running/
+tests/outputs/BIRDCLAW.md
+
+# Temp
+tmp/
+*.tmp
+
+# Repo references (large, read-only — not tracked)
+repo/
+
+# Model files
+models/
+*.gguf
+*.bin
+*.safetensors
